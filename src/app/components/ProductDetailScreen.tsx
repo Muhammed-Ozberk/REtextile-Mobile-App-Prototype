@@ -1,8 +1,19 @@
 import { useNavigate } from "react-router";
-import { ChevronLeft, MessageCircle } from "lucide-react";
+import { ChevronLeft, MessageCircle, ShoppingCart } from "lucide-react";
+import { useCart } from "../context/CartContext";
+import { materials } from "./HomeScreen";
 
 export default function ProductDetailScreen() {
   const navigate = useNavigate();
+  const { addToCart, isInCart } = useCart();
+
+  const currentMaterial = materials[0];
+  const inCart = isInCart(currentMaterial.id);
+
+  const handleAddToCart = () => {
+    addToCart(currentMaterial);
+    navigate("/cart");
+  };
 
   return (
     <div className="min-h-screen bg-white pb-20">
@@ -80,10 +91,16 @@ export default function ProductDetailScreen() {
               Message
             </button>
             <button
-              onClick={() => navigate("/home")}
-              className="flex-1 py-3 bg-teal-500 text-white rounded-xl hover:bg-teal-600 transition-colors"
+              onClick={handleAddToCart}
+              disabled={inCart}
+              className={`flex-1 py-3 rounded-xl transition-colors flex items-center justify-center gap-2 ${
+                inCart
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-teal-500 text-white hover:bg-teal-600"
+              }`}
             >
-              Request Material
+              <ShoppingCart className="w-5 h-5" />
+              {inCart ? "In Cart" : "Add to Cart"}
             </button>
           </div>
         </div>

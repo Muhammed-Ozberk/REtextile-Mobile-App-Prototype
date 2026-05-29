@@ -1,41 +1,52 @@
 import { useNavigate } from "react-router";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, ShoppingCart } from "lucide-react";
+import { useCart } from "../context/CartContext";
 
 const categories = ["Cotton", "Linen", "Silk", "Denim", "Polyester", "Wool"];
 
-const materials = [
+export const materials = [
   {
     id: 1,
     type: "Cotton",
     condition: "Slight staining",
     delivery: "Free delivery",
-    image: "🧵"
+    image: "🧵",
+    title: "Cotton fabric with stains"
   },
   {
     id: 2,
     type: "Denim",
     condition: "Small tear",
     delivery: "Pickup available",
-    image: "👖"
+    image: "👖",
+    title: "Denim with tear"
   },
   {
     id: 3,
     type: "Silk",
     condition: "Color fading",
     delivery: "Free delivery",
-    image: "🧣"
+    image: "🧣",
+    title: "Silk with fading"
   },
   {
     id: 4,
     type: "Wool",
     condition: "Minor holes",
     delivery: "Pickup available",
-    image: "🧶"
+    image: "🧶",
+    title: "Wool with holes"
   }
 ];
 
 export default function HomeScreen() {
   const navigate = useNavigate();
+  const { cart, addToCart } = useCart();
+
+  const handleAddToCart = (material: typeof materials[0], e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart(material);
+  };
 
   return (
     <div className="min-h-screen bg-white pb-20">
@@ -43,9 +54,19 @@ export default function HomeScreen() {
         <div className="p-4 space-y-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl">REtextile</h1>
-            <button onClick={() => navigate("/profile")} className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-              <span className="text-lg">👤</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={() => navigate("/cart")} className="relative w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                <ShoppingCart className="w-5 h-5" />
+                {cart.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-teal-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {cart.length}
+                  </span>
+                )}
+              </button>
+              <button onClick={() => navigate("/profile")} className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                <span className="text-lg">👤</span>
+              </button>
+            </div>
           </div>
 
           <div className="relative">
@@ -91,9 +112,12 @@ export default function HomeScreen() {
                 </div>
                 <p className="text-sm text-gray-600">{material.condition}</p>
                 <p className="text-xs text-gray-500">{material.delivery}</p>
-                <button className="w-full mt-2 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors flex items-center justify-center gap-1">
+                <button
+                  onClick={(e) => handleAddToCart(material, e)}
+                  className="w-full mt-2 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors flex items-center justify-center gap-1"
+                >
                   <Plus className="w-4 h-4" />
-                  Add
+                  Add to Cart
                 </button>
               </div>
             </div>
